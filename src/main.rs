@@ -7,18 +7,25 @@ use raw_token::verify_token;
 use raw_login::password_login;
 use error::AuthError;
 
+use serde::{ Serialize, Deserialize };
+
 use axum::{
   routing::{ get, post },
   Json, 
   Router,
   http::{StatusCode, header::HeaderMap},
 };
-
-use serde::{ Serialize, Deserialize };
+use tower::ServiceBuilder;
+use tower_http::cors::CorsLayer;
 
 #[tokio::main]
 async fn main() {
   let app = Router::new()
+    .layer(
+      ServiceBuilder::new().layer(
+        CorsLayer::permissive()
+      )
+    )
     .route("/public_key", get(public_key))
     .route("/login", post(login))
     .route("/verify_token", post(verify_login_state));
