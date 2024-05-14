@@ -16,19 +16,22 @@ use axum::{
   http::{StatusCode, header::HeaderMap},
 };
 use tower::ServiceBuilder;
-use tower_http::cors::CorsLayer;
+use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
   let app = Router::new()
-    .layer(
-      ServiceBuilder::new().layer(
-        CorsLayer::permissive()
-      )
-    )
     .route("/public_key", get(public_key))
     .route("/login", post(login))
-    .route("/verify_token", post(verify_login_state));
+    .route("/verify_token", post(verify_login_state))
+    .layer(
+      ServiceBuilder::new().layer(
+        CorsLayer::new()
+        .allow_headers(Any)
+        .allow_methods(Any)
+        .allow_origin(Any)
+      )
+    );
   let listener = tokio::net::TcpListener::bind("0.0.0.0:2086").await.unwrap();
   axum::serve(listener, app).await.unwrap();
 }
