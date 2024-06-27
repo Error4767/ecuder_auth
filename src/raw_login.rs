@@ -4,11 +4,16 @@ use crate::error::AuthError;
 use chrono::{Duration, Local};
 use serde::{ Serialize, Deserialize };
 
+use sha2::{Sha256, Digest};
+
 #[derive(Serialize, Deserialize, Clone)]
 struct UserInfo {
   id: String,
   username: String,
-  password: String,
+  #[serde(rename = "passwordHash")]
+  password_hash: String,
+  #[serde(rename = "passwordSalt")]
+  password_salt: String,
   #[serde(rename = "userDirectory")]
   user_directory: String,
 }
@@ -21,7 +26,7 @@ pub fn password_login(username: String, password: String)-> Result<String, Box<d
     .ok_or_else(|| AuthError::AccountNotExist)?;
   let user = &user_list[index];
   // 密码验证
-  if user.password != password {
+  if user.password_hash != parse_to_password_hash(format!("{}{}", password, user.password_salt)) {
     return Err(Box::new(AuthError::WrongPassword));
   }
   // 生成 token
@@ -32,4 +37,9 @@ pub fn password_login(username: String, password: String)-> Result<String, Box<d
     exp: Local::now().checked_add_signed(Duration::days(7)).unwrap().timestamp() as usize,
   };
   Ok(generate_token(&payload)?)
+}
+
+// 转化密码hash
+pub fn parse_to_password_hash(input: String)-> String {
+  return format!("{:x}", &Sha256::digest(input));
 }

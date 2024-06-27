@@ -2,13 +2,15 @@
   {
     "id": "ecuder",
     "username": "ecuder",
-    "password": "zyk54321!!!",
+    "passwordSalt": "k0KWyU9yUA2R5QAGWPxW2WXTcuDY2JZr",
+    "passwordHash": "fb00f930529c1f55ce465f4d15c51ce9f093e33f5a53da1e441f89a008779159",
     "userDirectory": "/index"
   },
   {
     "id": "cyy",
     "username": "cyy",
-    "password": "cyyc2219",
+    "passwordSalt": "itX7Ch5pToqx8zK0B8DCFYyjFOCgjwjb",
+    "passwordHash": "1429015740a196e123eec5bab872d50dfbb09a66328559ecdccdfeafe05b6bd1",
     "userDirectory": "/cyy"
   }
 ]
