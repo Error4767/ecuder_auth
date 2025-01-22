@@ -19,7 +19,7 @@ struct UserInfo {
 }
 type UserInfoList = Vec<UserInfo>;
 
-pub fn password_login(username: String, password: String)-> Result<String, Box<dyn std::error::Error>> {
+pub fn password_login(username: String, password: String)-> anyhow::Result<String> {
   let user_list: UserInfoList  = serde_json::from_str(&std::fs::read_to_string("./accounts.json")?)?;
   // 如果找不到用户，就返回错误
   let index = user_list.iter().position(|user| user.username == username)
@@ -27,7 +27,7 @@ pub fn password_login(username: String, password: String)-> Result<String, Box<d
   let user = &user_list[index];
   // 密码验证
   if user.password_hash != parse_to_password_hash(format!("{}{}", password, user.password_salt)) {
-    return Err(Box::new(AuthError::WrongPassword));
+    return Err(AuthError::WrongPassword.into());
   }
   // 生成 token
   let payload = TokenPayload {

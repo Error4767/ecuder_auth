@@ -22,7 +22,7 @@ pub struct TokenPayload {
   pub exp: usize,
 }
 
-pub fn generate_token(body: &TokenPayload)-> Result<String, Box<dyn std::error::Error>> {
+pub fn generate_token(body: &TokenPayload)-> anyhow::Result<String> {
   Ok(encode(
     &Header::new(Algorithm::RS256), 
     body,
@@ -30,7 +30,7 @@ pub fn generate_token(body: &TokenPayload)-> Result<String, Box<dyn std::error::
   )?)
 }
 
-pub fn verify_token(token: String)-> Result<TokenPayload, Box<dyn std::error::Error>> {
+pub fn verify_token(token: String)-> anyhow::Result<TokenPayload> {
   Ok(decode::<TokenPayload>(
     &token, 
     &DecodingKey::from_rsa_pem(PUBLIC_KEY.as_bytes())?, 
